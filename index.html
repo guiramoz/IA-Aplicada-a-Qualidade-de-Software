@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Triagem PS Escola</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">PS</div>
+        <div>
+          <strong>Triagem PS</strong>
+          <span>Unidade Pedro Gama v.11.1.0.1</span>
+        </div>
+      </div>
+      <nav class="nav-tabs" aria-label="Navegação principal">
+        <button class="nav-tab active" data-screen="cadastro" type="button">Cadastro</button>
+        <button class="nav-tab" data-screen="triagem" type="button">Triagem</button>
+        <button class="nav-tab" data-screen="concluidas" type="button">Triagens concluídas</button>
+        <button class="nav-tab" data-screen="fila" type="button">Fila</button>
+        
+      </nav>
+      <div class="shift-panel">
+        <span>Plantão</span>
+        <strong id="shiftClock">--:--</strong>
+        <small>Sistema de saúde integrada</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Atendimento pronto socorro</p>
+          <h1 id="screenTitle">Cadastro de paciente</h1>
+        </div>
+        <div class="status-counters" aria-label="Indicadores da fila">
+          <div>
+            <span id="patientCount">0</span>
+            <small>pacientes</small>
+          </div>
+          <div>
+            <span id="criticalCount">0</span>
+            <small>críticos</small>
+          </div>
+          <div>
+            <span id="waitingCount">0</span>
+            <small>em espera</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="screen active" id="cadastro">
+        <div class="section-grid">
+          <form class="panel form-panel" id="patientForm" autocomplete="off" novalidate>
+            <div class="panel-title">
+              <div>
+                <h2>Identificação</h2>
+                <p>Dados básicos e convênio médico</p>
+              </div>
+              <button class="ghost-button" id="clearPatientForm" type="button">Limpar</button>
+            </div>
+
+            <div class="form-grid">
+              <label>
+                <span>Nome</span>
+                <input id="firstName" name="firstName" type="text" required>
+                <small class="field-error" data-error-for="firstName" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Sobrenome</span>
+                <input id="lastName" name="lastName" type="text" required>
+                <small class="field-error" data-error-for="lastName" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Idade</span>
+                <input id="age" name="age" type="text" inputmode="numeric" required>
+                <small class="field-error" data-error-for="age" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Gênero</span>
+                <select id="gender" name="gender" required>
+                  <option value="">Selecionar</option>
+                  <option>Feminino</option>
+                  <option>Masculino</option>
+                  <option>Não binário</option>
+                  <option>Prefere não informar</option>
+                </select>
+                <small class="field-error" data-error-for="gender" aria-live="polite"></small>
+              </label>
+              <label class="wide">
+                <span>Endereço</span>
+                <input id="address" name="address" type="text" required>
+                <small class="field-error" data-error-for="address" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Plano</span>
+                <select id="insurancePlan" name="insurancePlan" required>
+                  <option value="">Selecionar</option>
+                  <option>Particular</option>
+                  <option>SUS</option>
+                </select>
+                <small class="field-error" data-error-for="insurancePlan" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Convênio</span>
+                <input id="insuranceName" name="insuranceName" type="text" required>
+                <small class="field-error" data-error-for="insuranceName" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Número da carteirinha</span>
+                <input id="insuranceCard" name="insuranceCard" type="text" required>
+                <small class="field-error" data-error-for="insuranceCard" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Validade</span>
+                <input id="insuranceValidUntil" name="insuranceValidUntil" type="month" required>
+                <small class="field-error" data-error-for="insuranceValidUntil" aria-live="polite"></small>
+              </label>
+              <p class="field-hint wide">Se o plano for SUS, convênio, carteirinha e validade ficam desativados automaticamente.</p>
+            </div>
+
+            <div class="form-actions">
+              <p class="form-message" id="patientMessage" role="status"></p>
+              <button class="primary-button" type="submit">Cadastrar paciente</button>
+            </div>
+          </form>
+
+          <section class="panel list-panel" aria-label="Pacientes cadastrados">
+            <div class="panel-title">
+              <div>
+                <h2>Recepção</h2>
+                <p>Pacientes aguardando triagem</p>
+              </div>
+            </div>
+            <label class="search-box">
+              <span>Buscar paciente</span>
+              <input id="patientSearch" type="search" placeholder="Digite um nome">
+            </label>
+            <div class="patient-list" id="patientList"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="triagem">
+        <div class="section-grid">
+          <form class="panel form-panel" id="triageForm" autocomplete="off" novalidate>
+            <div class="panel-title">
+              <div>
+                <h2>Determinação de triagem</h2>
+                <p>Sinais vitais, sintomas e classificação</p>
+              </div>
+              <button class="ghost-button" id="clearTriageForm" type="button">Limpar</button>
+            </div>
+
+            <div class="form-grid">
+              <label class="wide">
+                <span>Paciente</span>
+                <select id="triagePatient" name="triagePatient" required></select>
+                <small class="field-error" data-error-for="triagePatient" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Pressão arterial</span>
+                <input id="bloodPressure" name="bloodPressure" type="text" placeholder="120/80" required>
+                <small class="field-error" data-error-for="bloodPressure" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Temperatura</span>
+                <input id="temperature" name="temperature" type="text" inputmode="decimal" placeholder="36.5" required>
+                <small class="field-error" data-error-for="temperature" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Oxigenação sanguínea</span>
+                <input id="oxygen" name="oxygen" type="text" inputmode="numeric" placeholder="98" required>
+                <small class="field-error" data-error-for="oxygen" aria-live="polite"></small>
+              </label>
+              <label>
+                <span>Frequência cardíaca</span>
+                <input id="heartRate" name="heartRate" type="text" inputmode="numeric" placeholder="80">
+                <small class="field-error" data-error-for="heartRate" aria-live="polite"></small>
+              </label>
+              <label class="wide">
+                <span>Sintomas e observações</span>
+                <textarea id="symptoms" name="symptoms" rows="5" required></textarea>
+                <small class="field-error" data-error-for="symptoms" aria-live="polite"></small>
+              </label>
+            </div>
+
+            <fieldset class="classification-field">
+              <legend>Classificação</legend>
+              <label class="risk-option white">
+                <input type="radio" name="classification" value="branco" required>
+                <span>Branco</span>
+              </label>
+              <label class="risk-option green">
+                <input type="radio" name="classification" value="verde" required>
+                <span>Verde</span>
+              </label>
+              <label class="risk-option yellow">
+                <input type="radio" name="classification" value="amarelo" required>
+                <span>Amarelo</span>
+              </label>
+              <label class="risk-option red">
+                <input type="radio" name="classification" value="vermelho" required>
+                <span>Vermelho</span>
+              </label>
+              <small class="field-error wide" data-error-for="classification" aria-live="polite"></small>
+            </fieldset>
+
+            <div class="triage-tools">
+              <button class="secondary-button" id="suggestRisk" type="button">Sugerir classificação</button>
+              <div class="suggestion-card" id="riskSuggestion">Sem sugestão</div>
+            </div>
+
+            <div class="form-actions">
+              <p class="form-message" id="triageMessage" role="status"></p>
+              <button class="primary-button" type="submit">Registrar triagem</button>
+            </div>
+          </form>
+
+          <section class="panel list-panel" aria-label="Resumo do paciente">
+            <div class="panel-title">
+              <div>
+                <h2>Resumo clínico</h2>
+                <p>Paciente selecionado</p>
+              </div>
+            </div>
+            <div class="patient-summary" id="patientSummary"></div>
+            <div class="vital-preview" id="vitalPreview"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="fila">
+        <div class="queue-header">
+          <div>
+            <h2>Fila do pronto socorro</h2>
+            <p>Chamadas por classificação</p>
+          </div>
+          <button class="secondary-button" id="callNext" type="button">Chamar próximo</button>
+        </div>
+        <div class="queue-board" id="queueBoard"></div>
+      </section>
+
+      <section class="screen" id="concluidas">
+        <div class="queue-header">
+          <div>
+            <h2>Triagens concluídas</h2>
+            <p>Pacientes que já tiveram a classificação registrada</p>
+          </div>
+        </div>
+        <div class="queue-board" id="completedList"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="success-overlay" id="successOverlay" aria-hidden="true">
+    <div class="success-card" role="status" aria-live="polite">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <strong id="successTitle">Cadastro concluído</strong>
+      <p id="successText">Paciente cadastrado com sucesso. Abrindo triagem...</p>
+    </div>
+  </div>
+
+  <script src="state.js"></script>
+  <script src="cadastro.js"></script>
+  <script src="triagem.js"></script>
+  <script src="concluidas.js"></script>
+  <script src="fila.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
